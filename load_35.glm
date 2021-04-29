@@ -1,0 +1,6355 @@
+module powerflow{
+     solver_method NR;
+     NR_iteration_limit 50;
+};
+module residential;
+module tape;
+clock {
+  timezone CST6;
+  stoptime '2021-07-04 00:05:00';
+  starttime '2021-07-04 00:00:00';
+};
+
+object node {
+  phases A|B|C|N;
+  bustype SWING;
+  nominal_voltage 120000;
+  name substation;
+};
+
+object transformer {
+  phases ABCN;
+  name transformer1;
+  from substation;
+  to substation_meter;
+  configuration transformer1_configuration;
+};
+
+object transformer_configuration {
+    	name transformer1_configuration;
+    	connect_type WYE_WYE;
+     	install_type PADMOUNT;
+     	primary_voltage 120000;
+     	secondary_voltage 12470;
+     	power_rating 840 MVA;
+     	impedance 0.01+0.01j;
+};
+
+object meter {
+  nominal_voltage 12470;
+  phases ABCN;
+  name substation_meter;
+};
+
+object recorder {
+     	name substation_recorderA;
+     	parent substation_meter;
+     	file "load_35_substationA.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+};
+
+object recorder {
+     	name substation_recorderB;
+     	parent substation_meter;
+     	file "load_35_substationB.csv";
+     	interval 1;
+     	property measured_voltage_B.real, measured_voltage_B.imag, measured_current_B.real, measured_current_B.imag, measured_power_B.real, measured_power_B.imag;
+};
+
+object recorder {
+     	name substation_recorderC;
+     	parent substation_meter;
+     	file "load_35_substationC.csv";
+     	interval 1;
+     	property measured_voltage_C.real, measured_voltage_C.imag, measured_current_C.real, measured_current_C.imag, measured_power_C.real, measured_power_C.imag;
+};
+
+object line_spacing {     
+      name line1_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line1_conductor;
+};
+
+object line_configuration {
+  name line1_configuration;
+  spacing line1_spacing;
+  conductor_A overhead_line1_conductor;
+  conductor_B overhead_line1_conductor;
+  conductor_C overhead_line1_conductor;
+  conductor_N overhead_line1_conductor;
+};
+
+object overhead_line {
+  name overhead_line1;
+  phases ABCN;
+  length 360;
+  from substation_meter;
+  to meter1;
+  configuration line1_configuration;
+};
+
+object meter {     
+      name meter1;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder1A;
+     	file "load_35_meter1A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line1_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line1_conductor;
+};
+
+object line_configuration {
+  name load_line1_configuration;
+  spacing load_line1_spacing;
+  conductor_A overhead_load_line1_conductor;
+  conductor_B overhead_load_line1_conductor;
+  conductor_C overhead_load_line1_conductor;
+  conductor_N overhead_load_line1_conductor;
+};
+
+object overhead_line {
+  name load_overhead_line1;
+  phases ABCN;
+  length 100;
+  from meter1;
+  to charger1;
+  configuration load_line1_configuration;
+};
+
+object load {
+  
+  name charger1;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load1.player;
+	};
+  parent charger_meter1;
+};
+
+object meter {     
+      name charger_meter1;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder1A;
+     	file "load_35_load1A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name line2_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line2_conductor;
+};
+
+object line_configuration {
+  name line2_configuration;
+  spacing line2_spacing;
+  conductor_A overhead_line2_conductor;
+  conductor_B overhead_line2_conductor;
+  conductor_C overhead_line2_conductor;
+  conductor_N overhead_line2_conductor;
+};
+
+object overhead_line {
+  name overhead_line2;
+  phases ABCN;
+  length 360;
+  from meter1;
+  to meter2;
+  configuration line2_configuration;
+};
+
+object meter {     
+      name meter2;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder2A;
+     	file "load_35_meter2A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line2_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line2_conductor;
+};
+
+object line_configuration {
+  name load_line2_configuration;
+  spacing load_line2_spacing;
+  conductor_A overhead_load_line2_conductor;
+  conductor_B overhead_load_line2_conductor;
+  conductor_C overhead_load_line2_conductor;
+  conductor_N overhead_load_line2_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line2;
+  phases ABCN;
+  length 100;
+  from meter2;
+  to charger2;
+  configuration load_line2_configuration;
+};
+
+object load {
+  
+  name charger2;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load2.player;
+	};
+  parent charger_meter2;
+};
+
+object meter {     
+      name charger_meter2;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder2A;
+     	file "load_35_load2A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name line3_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line3_conductor;
+};
+
+object line_configuration {
+  name line3_configuration;
+  spacing line3_spacing;
+  conductor_A overhead_line3_conductor;
+  conductor_B overhead_line3_conductor;
+  conductor_C overhead_line3_conductor;
+  conductor_N overhead_line3_conductor;
+};
+
+object overhead_line {
+  name overhead_line3;
+  phases ABCN;
+  length 360;
+  from meter2;
+  to meter3;
+  configuration line3_configuration;
+};
+
+object meter {     
+      name meter3;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder3A;
+     	file "load_35_meter3A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line3_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line3_conductor;
+};
+
+object line_configuration {
+  name load_line3_configuration;
+  spacing load_line3_spacing;
+  conductor_A overhead_load_line3_conductor;
+  conductor_B overhead_load_line3_conductor;
+  conductor_C overhead_load_line3_conductor;
+  conductor_N overhead_load_line3_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line3;
+  phases ABCN;
+  length 100;
+  from meter3;
+  to charger3;
+  configuration load_line3_configuration;
+};
+
+object load {
+  
+  name charger3;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load3.player;
+	};
+  parent charger_meter3;
+};
+
+object meter {     
+      name charger_meter3;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder3A;
+     	file "load_35_load3A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name line4_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line4_conductor;
+};
+
+object line_configuration {
+  name line4_configuration;
+  spacing line4_spacing;
+  conductor_A overhead_line4_conductor;
+  conductor_B overhead_line4_conductor;
+  conductor_C overhead_line4_conductor;
+  conductor_N overhead_line4_conductor;
+};
+
+object overhead_line {
+  name overhead_line4;
+  phases ABCN;
+  length 360;
+  from meter3;
+  to meter4;
+  configuration line4_configuration;
+};
+
+object meter {     
+      name meter4;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder4A;
+     	file "load_35_meter4A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line4_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line4_conductor;
+};
+
+object line_configuration {
+  name load_line4_configuration;
+  spacing load_line4_spacing;
+  conductor_A overhead_load_line4_conductor;
+  conductor_B overhead_load_line4_conductor;
+  conductor_C overhead_load_line4_conductor;
+  conductor_N overhead_load_line4_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line4;
+  phases ABCN;
+  length 100;
+  from meter4;
+  to charger4;
+  configuration load_line3_configuration;
+};
+
+object load {
+  
+  name charger4;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load4.player;
+	};
+  parent charger_meter4;
+};
+
+object meter {     
+      name charger_meter4;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder4A;
+     	file "load_35_load4A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name line5_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line5_conductor;
+};
+
+object line_configuration {
+  name line5_configuration;
+  spacing line5_spacing;
+  conductor_A overhead_line5_conductor;
+  conductor_B overhead_line5_conductor;
+  conductor_C overhead_line5_conductor;
+  conductor_N overhead_line5_conductor;
+};
+
+object overhead_line {
+  name overhead_line5;
+  phases ABCN;
+  length 360;
+  from meter4;
+  to meter5;
+  configuration line5_configuration;
+};
+
+object meter {     
+      name meter5;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder5A;
+     	file "load_35_meter5A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line5_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line5_conductor;
+};
+
+object line_configuration {
+  name load_line5_configuration;
+  spacing load_line5_spacing;
+  conductor_A overhead_load_line5_conductor;
+  conductor_B overhead_load_line5_conductor;
+  conductor_C overhead_load_line5_conductor;
+  conductor_N overhead_load_line5_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line5;
+  phases ABCN;
+  length 100;
+  from meter5;
+  to charger5;
+  configuration load_line5_configuration;
+};
+
+object load {
+  
+  name charger5;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load5.player;
+	};
+  parent charger_meter5;
+};
+
+object meter {     
+      name charger_meter5;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder5A;
+     	file "load_35_load5A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name line6_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line6_conductor;
+};
+
+object line_configuration {
+  name line6_configuration;
+  spacing line6_spacing;
+  conductor_A overhead_line6_conductor;
+  conductor_B overhead_line6_conductor;
+  conductor_C overhead_line6_conductor;
+  conductor_N overhead_line6_conductor;
+};
+
+object overhead_line {
+  name overhead_line6;
+  phases ABCN;
+  length 360;
+  from meter5;
+  to meter6;
+  configuration line6_configuration;
+};
+
+object meter {     
+      name meter6;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder6A;
+     	file "load_35_meter6A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line6_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line6_conductor;
+};
+
+object line_configuration {
+  name load_line6_configuration;
+  spacing load_line6_spacing;
+  conductor_A overhead_load_line6_conductor;
+  conductor_B overhead_load_line6_conductor;
+  conductor_C overhead_load_line6_conductor;
+  conductor_N overhead_load_line6_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line6;
+  phases ABCN;
+  length 100;
+  from meter6;
+  to charger6;
+  configuration load_line6_configuration;
+};
+
+object load {
+  
+  name charger6;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load6.player;
+	};
+  parent charger_meter6;
+};
+
+object meter {     
+      name charger_meter6;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder6A;
+     	file "load_35_load6A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line7_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line7_conductor;
+};
+
+object line_configuration {
+  name line7_configuration;
+  spacing line7_spacing;
+  conductor_A overhead_line7_conductor;
+  conductor_B overhead_line7_conductor;
+  conductor_C overhead_line7_conductor;
+  conductor_N overhead_line7_conductor;
+};
+
+object overhead_line {
+  name overhead_line7;
+  phases ABCN;
+  length 360;
+  from meter6;
+  to meter7;
+  configuration line7_configuration;
+};
+
+object meter {     
+      name meter7;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder7A;
+     	file "load_35_meter7A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line7_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line7_conductor;
+};
+
+object line_configuration {
+  name load_line7_configuration;
+  spacing load_line7_spacing;
+  conductor_A overhead_load_line7_conductor;
+  conductor_B overhead_load_line7_conductor;
+  conductor_C overhead_load_line7_conductor;
+  conductor_N overhead_load_line7_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line7;
+  phases ABCN;
+  length 100;
+  from meter7;
+  to charger7;
+  configuration load_line7_configuration;
+};
+
+object load {
+  
+  name charger7;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load7.player;
+	};
+  parent charger_meter7;
+};
+
+object meter {     
+      name charger_meter7;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder7A;
+     	file "load_35_load7A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line8_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line8_conductor;
+};
+
+object line_configuration {
+  name line8_configuration;
+  spacing line8_spacing;
+  conductor_A overhead_line8_conductor;
+  conductor_B overhead_line8_conductor;
+  conductor_C overhead_line8_conductor;
+  conductor_N overhead_line8_conductor;
+};
+
+object overhead_line {
+  name overhead_line8;
+  phases ABCN;
+  length 360;
+  from meter7;
+  to meter8;
+  configuration line8_configuration;
+};
+
+object meter {     
+      name meter8;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder8A;
+     	file "load_35_meter8A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line8_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line8_conductor;
+};
+
+object line_configuration {
+  name load_line8_configuration;
+  spacing load_line8_spacing;
+  conductor_A overhead_load_line8_conductor;
+  conductor_B overhead_load_line8_conductor;
+  conductor_C overhead_load_line8_conductor;
+  conductor_N overhead_load_line8_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line8;
+  phases ABCN;
+  length 100;
+  from meter8;
+  to charger8;
+  configuration load_line8_configuration;
+};
+
+object load {
+  
+  name charger8;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load8.player;
+	};
+  parent charger_meter8;
+};
+
+object meter {     
+      name charger_meter8;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder8A;
+     	file "load_35_load8A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line9_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line9_conductor;
+};
+
+object line_configuration {
+  name line9_configuration;
+  spacing line9_spacing;
+  conductor_A overhead_line9_conductor;
+  conductor_B overhead_line9_conductor;
+  conductor_C overhead_line9_conductor;
+  conductor_N overhead_line9_conductor;
+};
+
+object overhead_line {
+  name overhead_line9;
+  phases ABCN;
+  length 360;
+  from meter8;
+  to meter9;
+  configuration line9_configuration;
+};
+
+object meter {     
+      name meter9;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder9A;
+     	file "load_35_meter9A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line9_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line9_conductor;
+};
+
+object line_configuration {
+  name load_line9_configuration;
+  spacing load_line9_spacing;
+  conductor_A overhead_load_line9_conductor;
+  conductor_B overhead_load_line9_conductor;
+  conductor_C overhead_load_line9_conductor;
+  conductor_N overhead_load_line9_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line9;
+  phases ABCN;
+  length 100;
+  from meter9;
+  to charger9;
+  configuration load_line9_configuration;
+};
+
+object load {
+  
+  name charger9;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load9.player;
+	};
+  parent charger_meter9;
+};
+
+object meter {     
+      name charger_meter9;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder9A;
+     	file "load_35_load9A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line10_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line10_conductor;
+};
+
+object line_configuration {
+  name line10_configuration;
+  spacing line10_spacing;
+  conductor_A overhead_line10_conductor;
+  conductor_B overhead_line10_conductor;
+  conductor_C overhead_line10_conductor;
+  conductor_N overhead_line10_conductor;
+};
+
+object overhead_line {
+  name overhead_line10;
+  phases ABCN;
+  length 360;
+  from meter9;
+  to meter10;
+  configuration line10_configuration;
+};
+
+object meter {     
+      name meter10;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder10A;
+     	file "load_35_meter10A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line10_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line10_conductor;
+};
+
+object line_configuration {
+  name load_line10_configuration;
+  spacing load_line10_spacing;
+  conductor_A overhead_load_line10_conductor;
+  conductor_B overhead_load_line10_conductor;
+  conductor_C overhead_load_line10_conductor;
+  conductor_N overhead_load_line10_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line10;
+  phases ABCN;
+  length 100;
+  from meter10;
+  to charger10;
+  configuration load_line10_configuration;
+};
+
+object load {
+  
+  name charger10;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load10.player;
+	};
+  parent charger_meter10;
+};
+
+object meter {     
+      name charger_meter10;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder10A;
+     	file "load_35_load10A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line11_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line11_conductor;
+};
+
+object line_configuration {
+  name line11_configuration;
+  spacing line11_spacing;
+  conductor_A overhead_line11_conductor;
+  conductor_B overhead_line11_conductor;
+  conductor_C overhead_line11_conductor;
+  conductor_N overhead_line11_conductor;
+};
+
+object overhead_line {
+  name overhead_line11;
+  phases ABCN;
+  length 360;
+  from meter10;
+  to meter11;
+  configuration line11_configuration;
+};
+
+object meter {     
+      name meter11;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder11A;
+     	file "load_35_meter11A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line11_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line11_conductor;
+};
+
+object line_configuration {
+  name load_line11_configuration;
+  spacing load_line11_spacing;
+  conductor_A overhead_load_line11_conductor;
+  conductor_B overhead_load_line11_conductor;
+  conductor_C overhead_load_line11_conductor;
+  conductor_N overhead_load_line11_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line11;
+  phases ABCN;
+  length 100;
+  from meter11;
+  to charger11;
+  configuration load_line11_configuration;
+};
+
+object load {
+  
+  name charger11;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load11.player;
+	};
+  parent charger_meter11;
+};
+
+object meter {     
+      name charger_meter11;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder11A;
+     	file "load_35_load11A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line12_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line12_conductor;
+};
+
+object line_configuration {
+  name line12_configuration;
+  spacing line12_spacing;
+  conductor_A overhead_line12_conductor;
+  conductor_B overhead_line12_conductor;
+  conductor_C overhead_line12_conductor;
+  conductor_N overhead_line12_conductor;
+};
+
+object overhead_line {
+  name overhead_line12;
+  phases ABCN;
+  length 360;
+  from meter11;
+  to meter12;
+  configuration line12_configuration;
+};
+
+object meter {     
+      name meter12;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder12A;
+     	file "load_35_meter12A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line12_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line12_conductor;
+};
+
+object line_configuration {
+  name load_line12_configuration;
+  spacing load_line12_spacing;
+  conductor_A overhead_load_line12_conductor;
+  conductor_B overhead_load_line12_conductor;
+  conductor_C overhead_load_line12_conductor;
+  conductor_N overhead_load_line12_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line12;
+  phases ABCN;
+  length 100;
+  from meter12;
+  to charger12;
+  configuration load_line12_configuration;
+};
+
+object load {
+  
+  name charger12;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load12.player;
+	};
+  parent charger_meter12;
+};
+
+object meter {     
+      name charger_meter12;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder12A;
+     	file "load_35_load12A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line13_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line13_conductor;
+};
+
+object line_configuration {
+  name line13_configuration;
+  spacing line13_spacing;
+  conductor_A overhead_line13_conductor;
+  conductor_B overhead_line13_conductor;
+  conductor_C overhead_line13_conductor;
+  conductor_N overhead_line13_conductor;
+};
+
+object overhead_line {
+  name overhead_line13;
+  phases ABCN;
+  length 360;
+  from meter12;
+  to meter13;
+  configuration line13_configuration;
+};
+
+object meter {     
+      name meter13;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder13A;
+     	file "load_35_meter13A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line13_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line13_conductor;
+};
+
+object line_configuration {
+  name load_line13_configuration;
+  spacing load_line13_spacing;
+  conductor_A overhead_load_line13_conductor;
+  conductor_B overhead_load_line13_conductor;
+  conductor_C overhead_load_line13_conductor;
+  conductor_N overhead_load_line13_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line13;
+  phases ABCN;
+  length 100;
+  from meter13;
+  to charger13;
+  configuration load_line13_configuration;
+};
+
+object load {
+  
+  name charger13;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load13.player;
+	};
+  parent charger_meter13;
+};
+
+object meter {     
+      name charger_meter13;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder13A;
+     	file "load_35_load13A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line14_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line14_conductor;
+};
+
+object line_configuration {
+  name line14_configuration;
+  spacing line14_spacing;
+  conductor_A overhead_line14_conductor;
+  conductor_B overhead_line14_conductor;
+  conductor_C overhead_line14_conductor;
+  conductor_N overhead_line14_conductor;
+};
+
+object overhead_line {
+  name overhead_line14;
+  phases ABCN;
+  length 360;
+  from meter13;
+  to meter14;
+  configuration line14_configuration;
+};
+
+object meter {     
+      name meter14;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder14A;
+     	file "load_35_meter14A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line14_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line14_conductor;
+};
+
+object line_configuration {
+  name load_line14_configuration;
+  spacing load_line14_spacing;
+  conductor_A overhead_load_line14_conductor;
+  conductor_B overhead_load_line14_conductor;
+  conductor_C overhead_load_line14_conductor;
+  conductor_N overhead_load_line14_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line14;
+  phases ABCN;
+  length 100;
+  from meter14;
+  to charger14;
+  configuration load_line14_configuration;
+};
+
+object load {
+  
+  name charger14;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load14.player;
+	};
+  parent charger_meter14;
+};
+
+object meter {     
+      name charger_meter14;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder14A;
+     	file "load_35_load14A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line15_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line15_conductor;
+};
+
+object line_configuration {
+  name line15_configuration;
+  spacing line15_spacing;
+  conductor_A overhead_line15_conductor;
+  conductor_B overhead_line15_conductor;
+  conductor_C overhead_line15_conductor;
+  conductor_N overhead_line15_conductor;
+};
+
+object overhead_line {
+  name overhead_line15;
+  phases ABCN;
+  length 360;
+  from meter14;
+  to meter15;
+  configuration line15_configuration;
+};
+
+object meter {     
+      name meter15;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder15A;
+     	file "load_35_meter15A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line15_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line15_conductor;
+};
+
+object line_configuration {
+  name load_line15_configuration;
+  spacing load_line15_spacing;
+  conductor_A overhead_load_line15_conductor;
+  conductor_B overhead_load_line15_conductor;
+  conductor_C overhead_load_line15_conductor;
+  conductor_N overhead_load_line15_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line15;
+  phases ABCN;
+  length 100;
+  from meter15;
+  to charger15;
+  configuration load_line15_configuration;
+};
+
+object load {
+  
+  name charger15;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load15.player;
+	};
+  parent charger_meter15;
+};
+
+object meter {     
+      name charger_meter15;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder15A;
+     	file "load_35_load15A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line16_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line16_conductor;
+};
+
+object line_configuration {
+  name line16_configuration;
+  spacing line16_spacing;
+  conductor_A overhead_line16_conductor;
+  conductor_B overhead_line16_conductor;
+  conductor_C overhead_line16_conductor;
+  conductor_N overhead_line16_conductor;
+};
+
+object overhead_line {
+  name overhead_line16;
+  phases ABCN;
+  length 360;
+  from meter15;
+  to meter16;
+  configuration line16_configuration;
+};
+
+object meter {     
+      name meter16;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder16A;
+     	file "load_35_meter16A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line16_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line16_conductor;
+};
+
+object line_configuration {
+  name load_line16_configuration;
+  spacing load_line16_spacing;
+  conductor_A overhead_load_line16_conductor;
+  conductor_B overhead_load_line16_conductor;
+  conductor_C overhead_load_line16_conductor;
+  conductor_N overhead_load_line16_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line16;
+  phases ABCN;
+  length 100;
+  from meter16;
+  to charger16;
+  configuration load_line16_configuration;
+};
+
+object load {
+  
+  name charger16;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load16.player;
+	};
+  parent charger_meter16;
+};
+
+object meter {     
+      name charger_meter16;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder16A;
+     	file "load_35_load16A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line17_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line17_conductor;
+};
+
+object line_configuration {
+  name line17_configuration;
+  spacing line17_spacing;
+  conductor_A overhead_line17_conductor;
+  conductor_B overhead_line17_conductor;
+  conductor_C overhead_line17_conductor;
+  conductor_N overhead_line17_conductor;
+};
+
+object overhead_line {
+  name overhead_line17;
+  phases ABCN;
+  length 360;
+  from meter16;
+  to meter17;
+  configuration line17_configuration;
+};
+
+object meter {     
+      name meter17;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder17A;
+     	file "load_35_meter17A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line17_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line17_conductor;
+};
+
+object line_configuration {
+  name load_line17_configuration;
+  spacing load_line17_spacing;
+  conductor_A overhead_load_line17_conductor;
+  conductor_B overhead_load_line17_conductor;
+  conductor_C overhead_load_line17_conductor;
+  conductor_N overhead_load_line17_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line17;
+  phases ABCN;
+  length 100;
+  from meter17;
+  to charger17;
+  configuration load_line17_configuration;
+};
+
+object load {
+  
+  name charger17;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load17.player;
+	};
+  parent charger_meter17;
+};
+
+object meter {     
+      name charger_meter17;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder17A;
+     	file "load_35_load17A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line18_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line18_conductor;
+};
+
+object line_configuration {
+  name line18_configuration;
+  spacing line18_spacing;
+  conductor_A overhead_line18_conductor;
+  conductor_B overhead_line18_conductor;
+  conductor_C overhead_line18_conductor;
+  conductor_N overhead_line18_conductor;
+};
+
+object overhead_line {
+  name overhead_line18;
+  phases ABCN;
+  length 360;
+  from meter17;
+  to meter18;
+  configuration line18_configuration;
+};
+
+object meter {     
+      name meter18;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder18A;
+     	file "load_35_meter18A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line18_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line18_conductor;
+};
+
+object line_configuration {
+  name load_line18_configuration;
+  spacing load_line18_spacing;
+  conductor_A overhead_load_line18_conductor;
+  conductor_B overhead_load_line18_conductor;
+  conductor_C overhead_load_line18_conductor;
+  conductor_N overhead_load_line18_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line18;
+  phases ABCN;
+  length 100;
+  from meter18;
+  to charger18;
+  configuration load_line18_configuration;
+};
+
+object load {
+  
+  name charger18;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load18.player;
+	};
+  parent charger_meter18;
+};
+
+object meter {     
+      name charger_meter18;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder18A;
+     	file "load_35_load18A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line19_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line19_conductor;
+};
+
+object line_configuration {
+  name line19_configuration;
+  spacing line19_spacing;
+  conductor_A overhead_line19_conductor;
+  conductor_B overhead_line19_conductor;
+  conductor_C overhead_line19_conductor;
+  conductor_N overhead_line19_conductor;
+};
+
+object overhead_line {
+  name overhead_line19;
+  phases ABCN;
+  length 360;
+  from meter18;
+  to meter19;
+  configuration line19_configuration;
+};
+
+object meter {     
+      name meter19;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder19A;
+     	file "load_35_meter19A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line19_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line19_conductor;
+};
+
+object line_configuration {
+  name load_line19_configuration;
+  spacing load_line19_spacing;
+  conductor_A overhead_load_line19_conductor;
+  conductor_B overhead_load_line19_conductor;
+  conductor_C overhead_load_line19_conductor;
+  conductor_N overhead_load_line19_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line19;
+  phases ABCN;
+  length 100;
+  from meter19;
+  to charger19;
+  configuration load_line19_configuration;
+};
+
+object load {
+  
+  name charger19;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load19.player;
+	};
+  parent charger_meter19;
+};
+
+object meter {     
+      name charger_meter19;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder19A;
+     	file "load_35_load19A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line20_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line20_conductor;
+};
+
+object line_configuration {
+  name line20_configuration;
+  spacing line20_spacing;
+  conductor_A overhead_line20_conductor;
+  conductor_B overhead_line20_conductor;
+  conductor_C overhead_line20_conductor;
+  conductor_N overhead_line20_conductor;
+};
+
+object overhead_line {
+  name overhead_line20;
+  phases ABCN;
+  length 360;
+  from meter19;
+  to meter20;
+  configuration line20_configuration;
+};
+
+object meter {     
+      name meter20;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder20A;
+     	file "load_35_meter20A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line20_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line20_conductor;
+};
+
+object line_configuration {
+  name load_line20_configuration;
+  spacing load_line20_spacing;
+  conductor_A overhead_load_line20_conductor;
+  conductor_B overhead_load_line20_conductor;
+  conductor_C overhead_load_line20_conductor;
+  conductor_N overhead_load_line20_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line20;
+  phases ABCN;
+  length 100;
+  from meter20;
+  to charger20;
+  configuration load_line20_configuration;
+};
+
+object load {
+  
+  name charger20;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load20.player;
+	};
+  parent charger_meter20;
+};
+
+object meter {     
+      name charger_meter20;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder20A;
+     	file "load_35_load20A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line21_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line21_conductor;
+};
+
+object line_configuration {
+  name line21_configuration;
+  spacing line21_spacing;
+  conductor_A overhead_line21_conductor;
+  conductor_B overhead_line21_conductor;
+  conductor_C overhead_line21_conductor;
+  conductor_N overhead_line21_conductor;
+};
+
+object overhead_line {
+  name overhead_line21;
+  phases ABCN;
+  length 360;
+  from meter20;
+  to meter21;
+  configuration line21_configuration;
+};
+
+object meter {     
+      name meter21;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder21A;
+     	file "load_35_meter21A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line21_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line21_conductor;
+};
+
+object line_configuration {
+  name load_line21_configuration;
+  spacing load_line21_spacing;
+  conductor_A overhead_load_line21_conductor;
+  conductor_B overhead_load_line21_conductor;
+  conductor_C overhead_load_line21_conductor;
+  conductor_N overhead_load_line21_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line21;
+  phases ABCN;
+  length 100;
+  from meter21;
+  to charger21;
+  configuration load_line21_configuration;
+};
+
+object load {
+  
+  name charger21;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load21.player;
+	};
+  parent charger_meter21;
+};
+
+object meter {     
+      name charger_meter21;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder21A;
+     	file "load_35_load21A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line22_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line22_conductor;
+};
+
+object line_configuration {
+  name line22_configuration;
+  spacing line22_spacing;
+  conductor_A overhead_line22_conductor;
+  conductor_B overhead_line22_conductor;
+  conductor_C overhead_line22_conductor;
+  conductor_N overhead_line22_conductor;
+};
+
+object overhead_line {
+  name overhead_line22;
+  phases ABCN;
+  length 360;
+  from meter21;
+  to meter22;
+  configuration line22_configuration;
+};
+
+object meter {     
+      name meter22;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder22A;
+     	file "load_35_meter22A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line22_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line22_conductor;
+};
+
+object line_configuration {
+  name load_line22_configuration;
+  spacing load_line22_spacing;
+  conductor_A overhead_load_line22_conductor;
+  conductor_B overhead_load_line22_conductor;
+  conductor_C overhead_load_line22_conductor;
+  conductor_N overhead_load_line22_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line22;
+  phases ABCN;
+  length 100;
+  from meter22;
+  to charger22;
+  configuration load_line22_configuration;
+};
+
+object load {
+  
+  name charger22;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load22.player;
+	};
+  parent charger_meter22;
+};
+
+object meter {     
+      name charger_meter22;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder22A;
+     	file "load_35_load22A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line23_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line23_conductor;
+};
+
+object line_configuration {
+  name line23_configuration;
+  spacing line23_spacing;
+  conductor_A overhead_line23_conductor;
+  conductor_B overhead_line23_conductor;
+  conductor_C overhead_line23_conductor;
+  conductor_N overhead_line23_conductor;
+};
+
+object overhead_line {
+  name overhead_line23;
+  phases ABCN;
+  length 360;
+  from meter22;
+  to meter23;
+  configuration line23_configuration;
+};
+
+object meter {     
+      name meter23;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder23A;
+     	file "load_35_meter23A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line23_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line23_conductor;
+};
+
+object line_configuration {
+  name load_line23_configuration;
+  spacing load_line23_spacing;
+  conductor_A overhead_load_line23_conductor;
+  conductor_B overhead_load_line23_conductor;
+  conductor_C overhead_load_line23_conductor;
+  conductor_N overhead_load_line23_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line23;
+  phases ABCN;
+  length 100;
+  from meter23;
+  to charger23;
+  configuration load_line23_configuration;
+};
+
+object load {
+  
+  name charger23;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load23.player;
+	};
+  parent charger_meter23;
+};
+
+object meter {     
+      name charger_meter23;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder23A;
+     	file "load_35_load23A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line24_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line24_conductor;
+};
+
+object line_configuration {
+  name line24_configuration;
+  spacing line24_spacing;
+  conductor_A overhead_line24_conductor;
+  conductor_B overhead_line24_conductor;
+  conductor_C overhead_line24_conductor;
+  conductor_N overhead_line24_conductor;
+};
+
+object overhead_line {
+  name overhead_line24;
+  phases ABCN;
+  length 360;
+  from meter23;
+  to meter24;
+  configuration line24_configuration;
+};
+
+object meter {     
+      name meter24;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder24A;
+     	file "load_35_meter24A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line24_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line24_conductor;
+};
+
+object line_configuration {
+  name load_line24_configuration;
+  spacing load_line24_spacing;
+  conductor_A overhead_load_line24_conductor;
+  conductor_B overhead_load_line24_conductor;
+  conductor_C overhead_load_line24_conductor;
+  conductor_N overhead_load_line24_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line24;
+  phases ABCN;
+  length 100;
+  from meter24;
+  to charger24;
+  configuration load_line24_configuration;
+};
+
+object load {
+  
+  name charger24;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load24.player;
+	};
+  parent charger_meter24;
+};
+
+object meter {     
+      name charger_meter24;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder24A;
+     	file "load_35_load24A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line25_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line25_conductor;
+};
+
+object line_configuration {
+  name line25_configuration;
+  spacing line25_spacing;
+  conductor_A overhead_line25_conductor;
+  conductor_B overhead_line25_conductor;
+  conductor_C overhead_line25_conductor;
+  conductor_N overhead_line25_conductor;
+};
+
+object overhead_line {
+  name overhead_line25;
+  phases ABCN;
+  length 360;
+  from meter24;
+  to meter25;
+  configuration line25_configuration;
+};
+
+object meter {     
+      name meter25;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder25A;
+     	file "load_35_meter25A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line25_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line25_conductor;
+};
+
+object line_configuration {
+  name load_line25_configuration;
+  spacing load_line25_spacing;
+  conductor_A overhead_load_line25_conductor;
+  conductor_B overhead_load_line25_conductor;
+  conductor_C overhead_load_line25_conductor;
+  conductor_N overhead_load_line25_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line25;
+  phases ABCN;
+  length 100;
+  from meter25;
+  to charger25;
+  configuration load_line25_configuration;
+};
+
+object load {
+  
+  name charger25;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load25.player;
+	};
+  parent charger_meter25;
+};
+
+object meter {     
+      name charger_meter25;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder25A;
+     	file "load_35_load25A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line26_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line26_conductor;
+};
+
+object line_configuration {
+  name line26_configuration;
+  spacing line26_spacing;
+  conductor_A overhead_line26_conductor;
+  conductor_B overhead_line26_conductor;
+  conductor_C overhead_line26_conductor;
+  conductor_N overhead_line26_conductor;
+};
+
+object overhead_line {
+  name overhead_line26;
+  phases ABCN;
+  length 360;
+  from meter25;
+  to meter26;
+  configuration line26_configuration;
+};
+
+object meter {     
+      name meter26;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder26A;
+     	file "load_35_meter26A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line26_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line26_conductor;
+};
+
+object line_configuration {
+  name load_line26_configuration;
+  spacing load_line26_spacing;
+  conductor_A overhead_load_line26_conductor;
+  conductor_B overhead_load_line26_conductor;
+  conductor_C overhead_load_line26_conductor;
+  conductor_N overhead_load_line26_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line26;
+  phases ABCN;
+  length 100;
+  from meter26;
+  to charger26;
+  configuration load_line26_configuration;
+};
+
+object load {
+  
+  name charger26;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load26.player;
+	};
+  parent charger_meter26;
+};
+
+object meter {     
+      name charger_meter26;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder26A;
+     	file "load_35_load26A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line27_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line27_conductor;
+};
+
+object line_configuration {
+  name line27_configuration;
+  spacing line27_spacing;
+  conductor_A overhead_line27_conductor;
+  conductor_B overhead_line27_conductor;
+  conductor_C overhead_line27_conductor;
+  conductor_N overhead_line27_conductor;
+};
+
+object overhead_line {
+  name overhead_line27;
+  phases ABCN;
+  length 360;
+  from meter26;
+  to meter27;
+  configuration line27_configuration;
+};
+
+object meter {     
+      name meter27;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder27A;
+     	file "load_35_meter27A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line27_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line27_conductor;
+};
+
+object line_configuration {
+  name load_line27_configuration;
+  spacing load_line27_spacing;
+  conductor_A overhead_load_line27_conductor;
+  conductor_B overhead_load_line27_conductor;
+  conductor_C overhead_load_line27_conductor;
+  conductor_N overhead_load_line27_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line27;
+  phases ABCN;
+  length 100;
+  from meter27;
+  to charger27;
+  configuration load_line27_configuration;
+};
+
+object load {
+  
+  name charger27;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load27.player;
+	};
+  parent charger_meter27;
+};
+
+object meter {     
+      name charger_meter27;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder27A;
+     	file "load_35_load27A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line28_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line28_conductor;
+};
+
+object line_configuration {
+  name line28_configuration;
+  spacing line28_spacing;
+  conductor_A overhead_line28_conductor;
+  conductor_B overhead_line28_conductor;
+  conductor_C overhead_line28_conductor;
+  conductor_N overhead_line28_conductor;
+};
+
+object overhead_line {
+  name overhead_line28;
+  phases ABCN;
+  length 360;
+  from meter27;
+  to meter28;
+  configuration line28_configuration;
+};
+
+object meter {     
+      name meter28;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder28A;
+     	file "load_35_meter28A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line28_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line28_conductor;
+};
+
+object line_configuration {
+  name load_line28_configuration;
+  spacing load_line28_spacing;
+  conductor_A overhead_load_line28_conductor;
+  conductor_B overhead_load_line28_conductor;
+  conductor_C overhead_load_line28_conductor;
+  conductor_N overhead_load_line28_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line28;
+  phases ABCN;
+  length 100;
+  from meter28;
+  to charger28;
+  configuration load_line28_configuration;
+};
+
+object load {
+  
+  name charger28;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load28.player;
+	};
+  parent charger_meter28;
+};
+
+object meter {     
+      name charger_meter28;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder28A;
+     	file "load_35_load28A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line29_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line29_conductor;
+};
+
+object line_configuration {
+  name line29_configuration;
+  spacing line29_spacing;
+  conductor_A overhead_line29_conductor;
+  conductor_B overhead_line29_conductor;
+  conductor_C overhead_line29_conductor;
+  conductor_N overhead_line29_conductor;
+};
+
+object overhead_line {
+  name overhead_line29;
+  phases ABCN;
+  length 360;
+  from meter28;
+  to meter29;
+  configuration line29_configuration;
+};
+
+object meter {     
+      name meter29;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder29A;
+     	file "load_35_meter29A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line29_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line29_conductor;
+};
+
+object line_configuration {
+  name load_line29_configuration;
+  spacing load_line29_spacing;
+  conductor_A overhead_load_line29_conductor;
+  conductor_B overhead_load_line29_conductor;
+  conductor_C overhead_load_line29_conductor;
+  conductor_N overhead_load_line29_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line29;
+  phases ABCN;
+  length 100;
+  from meter29;
+  to charger29;
+  configuration load_line29_configuration;
+};
+
+object load {
+  
+  name charger29;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load29.player;
+	};
+  parent charger_meter29;
+};
+
+object meter {     
+      name charger_meter29;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder29A;
+     	file "load_35_load29A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name line30_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_line30_conductor;
+};
+
+object line_configuration {
+  name line30_configuration;
+  spacing line30_spacing;
+  conductor_A overhead_line30_conductor;
+  conductor_B overhead_line30_conductor;
+  conductor_C overhead_line30_conductor;
+  conductor_N overhead_line30_conductor;
+};
+
+object overhead_line {
+  name overhead_line30;
+  phases ABCN;
+  length 360;
+  from meter29;
+  to meter30;
+  configuration line30_configuration;
+};
+
+object meter {     
+      name meter30;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name meter_recorder30A;
+     	file "load_35_meter30A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name load_line30_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name overhead_load_line30_conductor;
+};
+
+object line_configuration {
+  name load_line30_configuration;
+  spacing load_line30_spacing;
+  conductor_A overhead_load_line30_conductor;
+  conductor_B overhead_load_line30_conductor;
+  conductor_C overhead_load_line30_conductor;
+  conductor_N overhead_load_line30_conductor;
+};
+
+object overhead_line {
+  name overhead_load_line30;
+  phases ABCN;
+  length 100;
+  from meter30;
+  to charger30;
+  configuration load_line30_configuration;
+};
+
+object load {
+  
+  name charger30;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load30.player;
+	};
+  parent charger_meter30;
+};
+
+object meter {     
+      name charger_meter30;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name load_recorder30A;
+     	file "load_35_load30A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_line1_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line1_conductor;
+};
+
+object line_configuration {
+  name L_line1_configuration;
+  spacing L_line1_spacing;
+  conductor_A L_overhead_line1_conductor;
+  conductor_B L_overhead_line1_conductor;
+  conductor_C L_overhead_line1_conductor;
+  conductor_N L_overhead_line1_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line1;
+  phases ABCN;
+  length 360;
+  from substation_meter;
+  to L_meter1;
+  configuration L_line1_configuration;
+};
+
+object meter {     
+      name L_meter1;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder1A;
+     	file "load_35_L_meter1A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line1_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line1_conductor;
+};
+
+object line_configuration {
+  name L_load_line1_configuration;
+  spacing L_load_line1_spacing;
+  conductor_A L_overhead_load_line1_conductor;
+  conductor_B L_overhead_load_line1_conductor;
+  conductor_C L_overhead_load_line1_conductor;
+  conductor_N L_overhead_load_line1_conductor;
+};
+
+object overhead_line {
+  name L_load_overhead_line1;
+  phases ABCN;
+  length 100;
+  from L_meter1;
+  to L_charger1;
+  configuration L_load_line1_configuration;
+};
+
+object load {
+  
+  name L_charger1;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load1L.player;
+	};
+  parent L_charger_meter1;
+};
+
+object meter {     
+      name L_charger_meter1;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder1A;
+     	file "load_35_L_load1A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_line2_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line2_conductor;
+};
+
+object line_configuration {
+  name L_line2_configuration;
+  spacing L_line2_spacing;
+  conductor_A L_overhead_line2_conductor;
+  conductor_B L_overhead_line2_conductor;
+  conductor_C L_overhead_line2_conductor;
+  conductor_N L_overhead_line2_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line2;
+  phases ABCN;
+  length 360;
+  from L_meter1;
+  to L_meter2;
+  configuration L_line2_configuration;
+};
+
+object meter {     
+      name L_meter2;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder2A;
+     	file "load_35_L_meter2A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line2_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line2_conductor;
+};
+
+object line_configuration {
+  name L_load_line2_configuration;
+  spacing L_load_line2_spacing;
+  conductor_A L_overhead_load_line2_conductor;
+  conductor_B L_overhead_load_line2_conductor;
+  conductor_C L_overhead_load_line2_conductor;
+  conductor_N L_overhead_load_line2_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line2;
+  phases ABCN;
+  length 100;
+  from L_meter2;
+  to L_charger2;
+  configuration L_load_line2_configuration;
+};
+
+object load {
+  
+  name L_charger2;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load2L.player;
+	};
+  parent L_charger_meter2;
+};
+
+object meter {     
+      name L_charger_meter2;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder2A;
+     	file "load_35_L_load2A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_line3_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line3_conductor;
+};
+
+object line_configuration {
+  name L_line3_configuration;
+  spacing L_line3_spacing;
+  conductor_A L_overhead_line3_conductor;
+  conductor_B L_overhead_line3_conductor;
+  conductor_C L_overhead_line3_conductor;
+  conductor_N L_overhead_line3_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line3;
+  phases ABCN;
+  length 360;
+  from L_meter2;
+  to L_meter3;
+  configuration L_line3_configuration;
+};
+
+object meter {     
+      name L_meter3;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder3A;
+     	file "load_35_L_meter3A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line3_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line3_conductor;
+};
+
+object line_configuration {
+  name L_load_line3_configuration;
+  spacing L_load_line3_spacing;
+  conductor_A L_overhead_load_line3_conductor;
+  conductor_B L_overhead_load_line3_conductor;
+  conductor_C L_overhead_load_line3_conductor;
+  conductor_N L_overhead_load_line3_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line3;
+  phases ABCN;
+  length 100;
+  from L_meter3;
+  to L_charger3;
+  configuration L_load_line3_configuration;
+};
+
+object load {
+  
+  name L_charger3;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load3L.player;
+	};
+  parent L_charger_meter3;
+};
+
+object meter {     
+      name L_charger_meter3;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder3A;
+     	file "load_35_L_load3A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line4_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line4_conductor;
+};
+
+object line_configuration {
+  name L_line4_configuration;
+  spacing L_line4_spacing;
+  conductor_A L_overhead_line4_conductor;
+  conductor_B L_overhead_line4_conductor;
+  conductor_C L_overhead_line4_conductor;
+  conductor_N L_overhead_line4_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line4;
+  phases ABCN;
+  length 360;
+  from L_meter3;
+  to L_meter4;
+  configuration L_line4_configuration;
+};
+
+object meter {     
+      name L_meter4;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder4A;
+     	file "load_35_L_meter4A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line4_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line4_conductor;
+};
+
+object line_configuration {
+  name L_load_line4_configuration;
+  spacing L_load_line4_spacing;
+  conductor_A L_overhead_load_line4_conductor;
+  conductor_B L_overhead_load_line4_conductor;
+  conductor_C L_overhead_load_line4_conductor;
+  conductor_N L_overhead_load_line4_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line4;
+  phases ABCN;
+  length 100;
+  from L_meter4;
+  to L_charger4;
+  configuration L_load_line3_configuration;
+};
+
+object load {
+  
+  name L_charger4;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load4L.player;
+	};
+  parent L_charger_meter4;
+};
+
+object meter {     
+      name L_charger_meter4;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder4A;
+     	file "load_35_L_load4A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_line5_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line5_conductor;
+};
+
+object line_configuration {
+  name L_line5_configuration;
+  spacing L_line5_spacing;
+  conductor_A L_overhead_line5_conductor;
+  conductor_B L_overhead_line5_conductor;
+  conductor_C L_overhead_line5_conductor;
+  conductor_N L_overhead_line5_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line5;
+  phases ABCN;
+  length 360;
+  from L_meter4;
+  to L_meter5;
+  configuration L_line5_configuration;
+};
+
+object meter {     
+      name L_meter5;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder5A;
+     	file "load_35_L_meter5A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line5_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line5_conductor;
+};
+
+object line_configuration {
+  name L_load_line5_configuration;
+  spacing L_load_line5_spacing;
+  conductor_A L_overhead_load_line5_conductor;
+  conductor_B L_overhead_load_line5_conductor;
+  conductor_C L_overhead_load_line5_conductor;
+  conductor_N L_overhead_load_line5_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line5;
+  phases ABCN;
+  length 100;
+  from L_meter5;
+  to L_charger5;
+  configuration L_load_line5_configuration;
+};
+
+object load {
+  
+  name L_charger5;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load5L.player;
+	};
+  parent L_charger_meter5;
+};
+
+object meter {     
+      name L_charger_meter5;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder5A;
+     	file "load_35_L_load5A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_line6_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line6_conductor;
+};
+
+object line_configuration {
+  name L_line6_configuration;
+  spacing L_line6_spacing;
+  conductor_A L_overhead_line6_conductor;
+  conductor_B L_overhead_line6_conductor;
+  conductor_C L_overhead_line6_conductor;
+  conductor_N L_overhead_line6_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line6;
+  phases ABCN;
+  length 360;
+  from L_meter5;
+  to L_meter6;
+  configuration L_line6_configuration;
+};
+
+object meter {     
+      name L_meter6;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder6A;
+     	file "load_35_L_meter6A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line6_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line6_conductor;
+};
+
+object line_configuration {
+  name L_load_line6_configuration;
+  spacing L_load_line6_spacing;
+  conductor_A L_overhead_load_line6_conductor;
+  conductor_B L_overhead_load_line6_conductor;
+  conductor_C L_overhead_load_line6_conductor;
+  conductor_N L_overhead_load_line6_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line6;
+  phases ABCN;
+  length 100;
+  from L_meter6;
+  to L_charger6;
+  configuration L_load_line6_configuration;
+};
+
+object load {
+  
+  name L_charger6;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load6L.player;
+	};
+  parent L_charger_meter6;
+};
+
+object meter {     
+      name L_charger_meter6;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder6A;
+     	file "load_35_L_load6A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line7_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line7_conductor;
+};
+
+object line_configuration {
+  name L_line7_configuration;
+  spacing L_line7_spacing;
+  conductor_A L_overhead_line7_conductor;
+  conductor_B L_overhead_line7_conductor;
+  conductor_C L_overhead_line7_conductor;
+  conductor_N L_overhead_line7_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line7;
+  phases ABCN;
+  length 360;
+  from L_meter6;
+  to L_meter7;
+  configuration L_line7_configuration;
+};
+
+object meter {     
+      name L_meter7;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder7A;
+     	file "load_35_L_meter7A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line7_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line7_conductor;
+};
+
+object line_configuration {
+  name L_load_line7_configuration;
+  spacing L_load_line7_spacing;
+  conductor_A L_overhead_load_line7_conductor;
+  conductor_B L_overhead_load_line7_conductor;
+  conductor_C L_overhead_load_line7_conductor;
+  conductor_N L_overhead_load_line7_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line7;
+  phases ABCN;
+  length 100;
+  from L_meter7;
+  to L_charger7;
+  configuration L_load_line7_configuration;
+};
+
+object load {
+  
+  name L_charger7;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load7L.player;
+	};
+  parent L_charger_meter7;
+};
+
+object meter {     
+      name L_charger_meter7;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder7A;
+     	file "load_35_L_load7A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line8_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line8_conductor;
+};
+
+object line_configuration {
+  name L_line8_configuration;
+  spacing L_line8_spacing;
+  conductor_A L_overhead_line8_conductor;
+  conductor_B L_overhead_line8_conductor;
+  conductor_C L_overhead_line8_conductor;
+  conductor_N L_overhead_line8_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line8;
+  phases ABCN;
+  length 360;
+  from L_meter7;
+  to L_meter8;
+  configuration L_line8_configuration;
+};
+
+object meter {     
+      name L_meter8;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder8A;
+     	file "load_35_L_meter8A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line8_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line8_conductor;
+};
+
+object line_configuration {
+  name L_load_line8_configuration;
+  spacing L_load_line8_spacing;
+  conductor_A L_overhead_load_line8_conductor;
+  conductor_B L_overhead_load_line8_conductor;
+  conductor_C L_overhead_load_line8_conductor;
+  conductor_N L_overhead_load_line8_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line8;
+  phases ABCN;
+  length 100;
+  from L_meter8;
+  to L_charger8;
+  configuration L_load_line8_configuration;
+};
+
+object load {
+  
+  name L_charger8;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load8L.player;
+	};
+  parent L_charger_meter8;
+};
+
+object meter {     
+      name L_charger_meter8;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder8A;
+     	file "load_35_L_load8A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line9_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line9_conductor;
+};
+
+object line_configuration {
+  name L_line9_configuration;
+  spacing L_line9_spacing;
+  conductor_A L_overhead_line9_conductor;
+  conductor_B L_overhead_line9_conductor;
+  conductor_C L_overhead_line9_conductor;
+  conductor_N L_overhead_line9_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line9;
+  phases ABCN;
+  length 360;
+  from L_meter8;
+  to L_meter9;
+  configuration L_line9_configuration;
+};
+
+object meter {     
+      name L_meter9;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder9A;
+     	file "load_35_L_meter9A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line9_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line9_conductor;
+};
+
+object line_configuration {
+  name L_load_line9_configuration;
+  spacing L_load_line9_spacing;
+  conductor_A L_overhead_load_line9_conductor;
+  conductor_B L_overhead_load_line9_conductor;
+  conductor_C L_overhead_load_line9_conductor;
+  conductor_N L_overhead_load_line9_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line9;
+  phases ABCN;
+  length 100;
+  from L_meter9;
+  to L_charger9;
+  configuration L_load_line9_configuration;
+};
+
+object load {
+  
+  name L_charger9;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load9L.player;
+	};
+  parent L_charger_meter9;
+};
+
+object meter {     
+      name L_charger_meter9;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder9A;
+     	file "load_35_L_load9A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line10_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line10_conductor;
+};
+
+object line_configuration {
+  name L_line10_configuration;
+  spacing L_line10_spacing;
+  conductor_A L_overhead_line10_conductor;
+  conductor_B L_overhead_line10_conductor;
+  conductor_C L_overhead_line10_conductor;
+  conductor_N L_overhead_line10_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line10;
+  phases ABCN;
+  length 360;
+  from L_meter9;
+  to L_meter10;
+  configuration L_line10_configuration;
+};
+
+object meter {     
+      name L_meter10;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder10A;
+     	file "load_35_L_meter10A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line10_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line10_conductor;
+};
+
+object line_configuration {
+  name L_load_line10_configuration;
+  spacing L_load_line10_spacing;
+  conductor_A L_overhead_load_line10_conductor;
+  conductor_B L_overhead_load_line10_conductor;
+  conductor_C L_overhead_load_line10_conductor;
+  conductor_N L_overhead_load_line10_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line10;
+  phases ABCN;
+  length 100;
+  from L_meter10;
+  to L_charger10;
+  configuration L_load_line10_configuration;
+};
+
+object load {
+  
+  name L_charger10;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load10L.player;
+	};
+  parent L_charger_meter10;
+};
+
+object meter {     
+      name L_charger_meter10;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder10A;
+     	file "load_35_L_load10A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line11_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line11_conductor;
+};
+
+object line_configuration {
+  name L_line11_configuration;
+  spacing L_line11_spacing;
+  conductor_A L_overhead_line11_conductor;
+  conductor_B L_overhead_line11_conductor;
+  conductor_C L_overhead_line11_conductor;
+  conductor_N L_overhead_line11_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line11;
+  phases ABCN;
+  length 360;
+  from L_meter10;
+  to L_meter11;
+  configuration L_line11_configuration;
+};
+
+object meter {     
+      name L_meter11;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder11A;
+     	file "load_35_L_meter11A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line11_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line11_conductor;
+};
+
+object line_configuration {
+  name L_load_line11_configuration;
+  spacing L_load_line11_spacing;
+  conductor_A L_overhead_load_line11_conductor;
+  conductor_B L_overhead_load_line11_conductor;
+  conductor_C L_overhead_load_line11_conductor;
+  conductor_N L_overhead_load_line11_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line11;
+  phases ABCN;
+  length 100;
+  from L_meter11;
+  to L_charger11;
+  configuration L_load_line11_configuration;
+};
+
+object load {
+  
+  name L_charger11;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load11L.player;
+	};
+  parent L_charger_meter11;
+};
+
+object meter {     
+      name L_charger_meter11;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder11A;
+     	file "load_35_L_load11A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line12_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line12_conductor;
+};
+
+object line_configuration {
+  name L_line12_configuration;
+  spacing L_line12_spacing;
+  conductor_A L_overhead_line12_conductor;
+  conductor_B L_overhead_line12_conductor;
+  conductor_C L_overhead_line12_conductor;
+  conductor_N L_overhead_line12_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line12;
+  phases ABCN;
+  length 360;
+  from L_meter11;
+  to L_meter12;
+  configuration L_line12_configuration;
+};
+
+object meter {     
+      name L_meter12;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder12A;
+     	file "load_35_L_meter12A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line12_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line12_conductor;
+};
+
+object line_configuration {
+  name L_load_line12_configuration;
+  spacing L_load_line12_spacing;
+  conductor_A L_overhead_load_line12_conductor;
+  conductor_B L_overhead_load_line12_conductor;
+  conductor_C L_overhead_load_line12_conductor;
+  conductor_N L_overhead_load_line12_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line12;
+  phases ABCN;
+  length 100;
+  from L_meter12;
+  to L_charger12;
+  configuration L_load_line12_configuration;
+};
+
+object load {
+  
+  name L_charger12;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load12L.player;
+	};
+  parent L_charger_meter12;
+};
+
+object meter {     
+      name L_charger_meter12;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder12A;
+     	file "load_35_L_load12A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line13_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line13_conductor;
+};
+
+object line_configuration {
+  name L_line13_configuration;
+  spacing L_line13_spacing;
+  conductor_A L_overhead_line13_conductor;
+  conductor_B L_overhead_line13_conductor;
+  conductor_C L_overhead_line13_conductor;
+  conductor_N L_overhead_line13_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line13;
+  phases ABCN;
+  length 360;
+  from L_meter12;
+  to L_meter13;
+  configuration L_line13_configuration;
+};
+
+object meter {     
+      name L_meter13;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder13A;
+     	file "load_35_L_meter13A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line13_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line13_conductor;
+};
+
+object line_configuration {
+  name L_load_line13_configuration;
+  spacing L_load_line13_spacing;
+  conductor_A L_overhead_load_line13_conductor;
+  conductor_B L_overhead_load_line13_conductor;
+  conductor_C L_overhead_load_line13_conductor;
+  conductor_N L_overhead_load_line13_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line13;
+  phases ABCN;
+  length 100;
+  from L_meter13;
+  to L_charger13;
+  configuration L_load_line13_configuration;
+};
+
+object load {
+  
+  name L_charger13;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load13L.player;
+	};
+  parent L_charger_meter13;
+};
+
+object meter {     
+      name L_charger_meter13;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder13A;
+     	file "load_35_L_load13A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line14_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line14_conductor;
+};
+
+object line_configuration {
+  name L_line14_configuration;
+  spacing L_line14_spacing;
+  conductor_A L_overhead_line14_conductor;
+  conductor_B L_overhead_line14_conductor;
+  conductor_C L_overhead_line14_conductor;
+  conductor_N L_overhead_line14_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line14;
+  phases ABCN;
+  length 360;
+  from L_meter13;
+  to L_meter14;
+  configuration L_line14_configuration;
+};
+
+object meter {     
+      name L_meter14;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder14A;
+     	file "load_35_L_meter14A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line14_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line14_conductor;
+};
+
+object line_configuration {
+  name L_load_line14_configuration;
+  spacing L_load_line14_spacing;
+  conductor_A L_overhead_load_line14_conductor;
+  conductor_B L_overhead_load_line14_conductor;
+  conductor_C L_overhead_load_line14_conductor;
+  conductor_N L_overhead_load_line14_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line14;
+  phases ABCN;
+  length 100;
+  from L_meter14;
+  to L_charger14;
+  configuration L_load_line14_configuration;
+};
+
+object load {
+  
+  name L_charger14;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load14L.player;
+	};
+  parent L_charger_meter14;
+};
+
+object meter {     
+      name L_charger_meter14;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder14A;
+     	file "load_35_L_load14A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line15_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line15_conductor;
+};
+
+object line_configuration {
+  name L_line15_configuration;
+  spacing L_line15_spacing;
+  conductor_A L_overhead_line15_conductor;
+  conductor_B L_overhead_line15_conductor;
+  conductor_C L_overhead_line15_conductor;
+  conductor_N L_overhead_line15_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line15;
+  phases ABCN;
+  length 360;
+  from L_meter14;
+  to L_meter15;
+  configuration L_line15_configuration;
+};
+
+object meter {     
+      name L_meter15;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder15A;
+     	file "load_35_L_meter15A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line15_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line15_conductor;
+};
+
+object line_configuration {
+  name L_load_line15_configuration;
+  spacing L_load_line15_spacing;
+  conductor_A L_overhead_load_line15_conductor;
+  conductor_B L_overhead_load_line15_conductor;
+  conductor_C L_overhead_load_line15_conductor;
+  conductor_N L_overhead_load_line15_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line15;
+  phases ABCN;
+  length 100;
+  from L_meter15;
+  to L_charger15;
+  configuration L_load_line15_configuration;
+};
+
+object load {
+  
+  name L_charger15;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load15L.player;
+	};
+  parent L_charger_meter15;
+};
+
+object meter {     
+      name L_charger_meter15;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder15A;
+     	file "load_35_L_load15A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line16_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line16_conductor;
+};
+
+object line_configuration {
+  name L_line16_configuration;
+  spacing L_line16_spacing;
+  conductor_A L_overhead_line16_conductor;
+  conductor_B L_overhead_line16_conductor;
+  conductor_C L_overhead_line16_conductor;
+  conductor_N L_overhead_line16_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line16;
+  phases ABCN;
+  length 360;
+  from L_meter15;
+  to L_meter16;
+  configuration L_line16_configuration;
+};
+
+object meter {     
+      name L_meter16;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder16A;
+     	file "load_35_L_meter16A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line16_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line16_conductor;
+};
+
+object line_configuration {
+  name L_load_line16_configuration;
+  spacing L_load_line16_spacing;
+  conductor_A L_overhead_load_line16_conductor;
+  conductor_B L_overhead_load_line16_conductor;
+  conductor_C L_overhead_load_line16_conductor;
+  conductor_N L_overhead_load_line16_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line16;
+  phases ABCN;
+  length 100;
+  from L_meter16;
+  to L_charger16;
+  configuration L_load_line16_configuration;
+};
+
+object load {
+  
+  name L_charger16;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load16L.player;
+	};
+  parent L_charger_meter16;
+};
+
+object meter {     
+      name L_charger_meter16;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder16A;
+     	file "load_35_L_load16A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line17_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line17_conductor;
+};
+
+object line_configuration {
+  name L_line17_configuration;
+  spacing L_line17_spacing;
+  conductor_A L_overhead_line17_conductor;
+  conductor_B L_overhead_line17_conductor;
+  conductor_C L_overhead_line17_conductor;
+  conductor_N L_overhead_line17_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line17;
+  phases ABCN;
+  length 360;
+  from L_meter16;
+  to L_meter17;
+  configuration L_line17_configuration;
+};
+
+object meter {     
+      name L_meter17;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder17A;
+     	file "load_35_L_meter17A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line17_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line17_conductor;
+};
+
+object line_configuration {
+  name L_load_line17_configuration;
+  spacing L_load_line17_spacing;
+  conductor_A L_overhead_load_line17_conductor;
+  conductor_B L_overhead_load_line17_conductor;
+  conductor_C L_overhead_load_line17_conductor;
+  conductor_N L_overhead_load_line17_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line17;
+  phases ABCN;
+  length 100;
+  from L_meter17;
+  to L_charger17;
+  configuration L_load_line17_configuration;
+};
+
+object load {
+  
+  name L_charger17;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load17L.player;
+	};
+  parent L_charger_meter17;
+};
+
+object meter {     
+      name L_charger_meter17;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder17A;
+     	file "load_35_L_load17A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line18_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line18_conductor;
+};
+
+object line_configuration {
+  name L_line18_configuration;
+  spacing L_line18_spacing;
+  conductor_A L_overhead_line18_conductor;
+  conductor_B L_overhead_line18_conductor;
+  conductor_C L_overhead_line18_conductor;
+  conductor_N L_overhead_line18_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line18;
+  phases ABCN;
+  length 360;
+  from L_meter17;
+  to L_meter18;
+  configuration L_line18_configuration;
+};
+
+object meter {     
+      name L_meter18;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder18A;
+     	file "load_35_L_meter18A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line18_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line18_conductor;
+};
+
+object line_configuration {
+  name L_load_line18_configuration;
+  spacing L_load_line18_spacing;
+  conductor_A L_overhead_load_line18_conductor;
+  conductor_B L_overhead_load_line18_conductor;
+  conductor_C L_overhead_load_line18_conductor;
+  conductor_N L_overhead_load_line18_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line18;
+  phases ABCN;
+  length 100;
+  from L_meter18;
+  to L_charger18;
+  configuration L_load_line18_configuration;
+};
+
+object load {
+  
+  name L_charger18;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load18L.player;
+	};
+  parent L_charger_meter18;
+};
+
+object meter {     
+      name L_charger_meter18;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder18A;
+     	file "load_35_L_load18A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line19_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line19_conductor;
+};
+
+object line_configuration {
+  name L_line19_configuration;
+  spacing L_line19_spacing;
+  conductor_A L_overhead_line19_conductor;
+  conductor_B L_overhead_line19_conductor;
+  conductor_C L_overhead_line19_conductor;
+  conductor_N L_overhead_line19_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line19;
+  phases ABCN;
+  length 360;
+  from L_meter18;
+  to L_meter19;
+  configuration L_line19_configuration;
+};
+
+object meter {     
+      name L_meter19;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder19A;
+     	file "load_35_L_meter19A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line19_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line19_conductor;
+};
+
+object line_configuration {
+  name L_load_line19_configuration;
+  spacing L_load_line19_spacing;
+  conductor_A L_overhead_load_line19_conductor;
+  conductor_B L_overhead_load_line19_conductor;
+  conductor_C L_overhead_load_line19_conductor;
+  conductor_N L_overhead_load_line19_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line19;
+  phases ABCN;
+  length 100;
+  from L_meter19;
+  to L_charger19;
+  configuration L_load_line19_configuration;
+};
+
+object load {
+  
+  name L_charger19;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load19L.player;
+	};
+  parent L_charger_meter19;
+};
+
+object meter {     
+      name L_charger_meter19;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder19A;
+     	file "load_35_L_load19A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line20_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line20_conductor;
+};
+
+object line_configuration {
+  name L_line20_configuration;
+  spacing L_line20_spacing;
+  conductor_A L_overhead_line20_conductor;
+  conductor_B L_overhead_line20_conductor;
+  conductor_C L_overhead_line20_conductor;
+  conductor_N L_overhead_line20_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line20;
+  phases ABCN;
+  length 360;
+  from L_meter19;
+  to L_meter20;
+  configuration L_line20_configuration;
+};
+
+object meter {     
+      name L_meter20;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder20A;
+     	file "load_35_L_meter20A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line20_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line20_conductor;
+};
+
+object line_configuration {
+  name L_load_line20_configuration;
+  spacing L_load_line20_spacing;
+  conductor_A L_overhead_load_line20_conductor;
+  conductor_B L_overhead_load_line20_conductor;
+  conductor_C L_overhead_load_line20_conductor;
+  conductor_N L_overhead_load_line20_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line20;
+  phases ABCN;
+  length 100;
+  from L_meter20;
+  to L_charger20;
+  configuration L_load_line20_configuration;
+};
+
+object load {
+  
+  name L_charger20;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load20L.player;
+	};
+  parent L_charger_meter20;
+};
+
+object meter {     
+      name L_charger_meter20;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder20A;
+     	file "load_35_L_load20A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line21_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line21_conductor;
+};
+
+object line_configuration {
+  name L_line21_configuration;
+  spacing L_line21_spacing;
+  conductor_A L_overhead_line21_conductor;
+  conductor_B L_overhead_line21_conductor;
+  conductor_C L_overhead_line21_conductor;
+  conductor_N L_overhead_line21_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line21;
+  phases ABCN;
+  length 360;
+  from L_meter20;
+  to L_meter21;
+  configuration L_line21_configuration;
+};
+
+object meter {     
+      name L_meter21;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder21A;
+     	file "load_35_L_meter21A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line21_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line21_conductor;
+};
+
+object line_configuration {
+  name L_load_line21_configuration;
+  spacing L_load_line21_spacing;
+  conductor_A L_overhead_load_line21_conductor;
+  conductor_B L_overhead_load_line21_conductor;
+  conductor_C L_overhead_load_line21_conductor;
+  conductor_N L_overhead_load_line21_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line21;
+  phases ABCN;
+  length 100;
+  from L_meter21;
+  to L_charger21;
+  configuration L_load_line21_configuration;
+};
+
+object load {
+  
+  name L_charger21;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load21L.player;
+	};
+  parent L_charger_meter21;
+};
+
+object meter {     
+      name L_charger_meter21;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder21A;
+     	file "load_35_L_load21A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line22_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line22_conductor;
+};
+
+object line_configuration {
+  name L_line22_configuration;
+  spacing L_line22_spacing;
+  conductor_A L_overhead_line22_conductor;
+  conductor_B L_overhead_line22_conductor;
+  conductor_C L_overhead_line22_conductor;
+  conductor_N L_overhead_line22_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line22;
+  phases ABCN;
+  length 360;
+  from L_meter21;
+  to L_meter22;
+  configuration L_line22_configuration;
+};
+
+object meter {     
+      name L_meter22;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder22A;
+     	file "load_35_L_meter22A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line22_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line22_conductor;
+};
+
+object line_configuration {
+  name L_load_line22_configuration;
+  spacing L_load_line22_spacing;
+  conductor_A L_overhead_load_line22_conductor;
+  conductor_B L_overhead_load_line22_conductor;
+  conductor_C L_overhead_load_line22_conductor;
+  conductor_N L_overhead_load_line22_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line22;
+  phases ABCN;
+  length 100;
+  from L_meter22;
+  to L_charger22;
+  configuration L_load_line22_configuration;
+};
+
+object load {
+  
+  name L_charger22;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load22L.player;
+	};
+  parent L_charger_meter22;
+};
+
+object meter {     
+      name L_charger_meter22;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder22A;
+     	file "load_35_L_load22A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line23_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line23_conductor;
+};
+
+object line_configuration {
+  name L_line23_configuration;
+  spacing L_line23_spacing;
+  conductor_A L_overhead_line23_conductor;
+  conductor_B L_overhead_line23_conductor;
+  conductor_C L_overhead_line23_conductor;
+  conductor_N L_overhead_line23_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line23;
+  phases ABCN;
+  length 360;
+  from L_meter22;
+  to L_meter23;
+  configuration L_line23_configuration;
+};
+
+object meter {     
+      name L_meter23;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder23A;
+     	file "load_35_L_meter23A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line23_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line23_conductor;
+};
+
+object line_configuration {
+  name L_load_line23_configuration;
+  spacing L_load_line23_spacing;
+  conductor_A L_overhead_load_line23_conductor;
+  conductor_B L_overhead_load_line23_conductor;
+  conductor_C L_overhead_load_line23_conductor;
+  conductor_N L_overhead_load_line23_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line23;
+  phases ABCN;
+  length 100;
+  from L_meter23;
+  to L_charger23;
+  configuration L_load_line23_configuration;
+};
+
+object load {
+  
+  name L_charger23;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load23L.player;
+	};
+  parent L_charger_meter23;
+};
+
+object meter {     
+      name L_charger_meter23;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder23A;
+     	file "load_35_L_load23A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line24_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line24_conductor;
+};
+
+object line_configuration {
+  name L_line24_configuration;
+  spacing L_line24_spacing;
+  conductor_A L_overhead_line24_conductor;
+  conductor_B L_overhead_line24_conductor;
+  conductor_C L_overhead_line24_conductor;
+  conductor_N L_overhead_line24_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line24;
+  phases ABCN;  
+  length 360;
+  from L_meter23;
+  to L_meter24;
+  configuration L_line24_configuration;
+};
+
+object meter {     
+      name L_meter24;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder24A;
+     	file "load_35_L_meter24A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line24_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line24_conductor;
+};
+
+object line_configuration {
+  name L_load_line24_configuration;
+  spacing L_load_line24_spacing;
+  conductor_A L_overhead_load_line24_conductor;
+  conductor_B L_overhead_load_line24_conductor;
+  conductor_C L_overhead_load_line24_conductor;
+  conductor_N L_overhead_load_line24_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line24;
+  phases ABCN;
+  length 100;
+  from L_meter24;
+  to L_charger24;
+  configuration L_load_line24_configuration;
+};
+
+object load {
+  
+  name L_charger24;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load24L.player;
+	};
+  parent L_charger_meter24;
+};
+
+object meter {     
+      name L_charger_meter24;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder24A;
+     	file "load_35_L_load24A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line25_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line25_conductor;
+};
+
+object line_configuration {
+  name L_line25_configuration;
+  spacing L_line25_spacing;
+  conductor_A L_overhead_line25_conductor;
+  conductor_B L_overhead_line25_conductor;
+  conductor_C L_overhead_line25_conductor;
+  conductor_N L_overhead_line25_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line25;
+  phases ABCN;
+  length 360;
+  from L_meter24;
+  to L_meter25;
+  configuration L_line25_configuration;
+};
+
+object meter {     
+      name L_meter25;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder25A;
+     	file "load_35_L_meter25A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line25_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line25_conductor;
+};
+
+object line_configuration {
+  name L_load_line25_configuration;
+  spacing L_load_line25_spacing;
+  conductor_A L_overhead_load_line25_conductor;
+  conductor_B L_overhead_load_line25_conductor;
+  conductor_C L_overhead_load_line25_conductor;
+  conductor_N L_overhead_load_line25_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line25;
+  phases ABCN;
+  length 100;
+  from L_meter25;
+  to L_charger25;
+  configuration L_load_line25_configuration;
+};
+
+object load {
+  
+  name L_charger25;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load25L.player;
+	};
+  parent L_charger_meter25;
+};
+
+object meter {     
+      name L_charger_meter25;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder25A;
+     	file "load_35_L_load25A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line26_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line26_conductor;
+};
+
+object line_configuration {
+  name L_line26_configuration;
+  spacing L_line26_spacing;
+  conductor_A L_overhead_line26_conductor;
+  conductor_B L_overhead_line26_conductor;
+  conductor_C L_overhead_line26_conductor;
+  conductor_N L_overhead_line26_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line26;
+  phases ABCN;
+  length 360;
+  from L_meter25;
+  to L_meter26;
+  configuration L_line26_configuration;
+};
+
+object meter {     
+      name L_meter26;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder26A;
+     	file "load_35_L_meter26A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line26_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line26_conductor;
+};
+
+object line_configuration {
+  name L_load_line26_configuration;
+  spacing L_load_line26_spacing;
+  conductor_A L_overhead_load_line26_conductor;
+  conductor_B L_overhead_load_line26_conductor;
+  conductor_C L_overhead_load_line26_conductor;
+  conductor_N L_overhead_load_line26_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line26;
+  phases ABCN;
+  length 100;
+  from L_meter26;
+  to L_charger26;
+  configuration L_load_line26_configuration;
+};
+
+object load {
+  
+  name L_charger26;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load26L.player;
+	};
+  parent L_charger_meter26;
+};
+
+object meter {     
+      name L_charger_meter26;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder26A;
+     	file "load_35_L_load26A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line27_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line27_conductor;
+};
+
+object line_configuration {
+  name L_line27_configuration;
+  spacing L_line27_spacing;
+  conductor_A L_overhead_line27_conductor;
+  conductor_B L_overhead_line27_conductor;
+  conductor_C L_overhead_line27_conductor;
+  conductor_N L_overhead_line27_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line27;
+  phases ABCN;
+  length 360;
+  from L_meter26;
+  to L_meter27;
+  configuration L_line27_configuration;
+};
+
+object meter {     
+      name L_meter27;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder27A;
+     	file "load_35_L_meter27A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line27_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line27_conductor;
+};
+
+object line_configuration {
+  name L_load_line27_configuration;
+  spacing L_load_line27_spacing;
+  conductor_A L_overhead_load_line27_conductor;
+  conductor_B L_overhead_load_line27_conductor;
+  conductor_C L_overhead_load_line27_conductor;
+  conductor_N L_overhead_load_line27_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line27;
+  phases ABCN;
+  length 100;
+  from L_meter27;
+  to L_charger27;
+  configuration L_load_line27_configuration;
+};
+
+object load {
+  
+  name L_charger27;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load27L.player;
+	};
+  parent L_charger_meter27;
+};
+
+object meter {     
+      name L_charger_meter27;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder27A;
+     	file "load_35_L_load27A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line28_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line28_conductor;
+};
+
+object line_configuration {
+  name L_line28_configuration;
+  spacing L_line28_spacing;
+  conductor_A L_overhead_line28_conductor;
+  conductor_B L_overhead_line28_conductor;
+  conductor_C L_overhead_line28_conductor;
+  conductor_N L_overhead_line28_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line28;
+  phases ABCN;
+  length 360;
+  from L_meter27;
+  to L_meter28;
+  configuration L_line28_configuration;
+};
+
+object meter {     
+      name L_meter28;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder28A;
+     	file "load_35_L_meter28A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line28_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line28_conductor;
+};
+
+object line_configuration {
+  name L_load_line28_configuration;
+  spacing L_load_line28_spacing;
+  conductor_A L_overhead_load_line28_conductor;
+  conductor_B L_overhead_load_line28_conductor;
+  conductor_C L_overhead_load_line28_conductor;
+  conductor_N L_overhead_load_line28_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line28;
+  phases ABCN;
+  length 100;
+  from L_meter28;
+  to L_charger28;
+  configuration L_load_line28_configuration;
+};
+
+object load {
+  
+  name L_charger28;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load28L.player;
+	};
+  parent L_charger_meter28;
+};
+
+object meter {     
+      name L_charger_meter28;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder28A;
+     	file "load_35_L_load28A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line29_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line29_conductor;
+};
+
+object line_configuration {
+  name L_line29_configuration;
+  spacing L_line29_spacing;
+  conductor_A L_overhead_line29_conductor;
+  conductor_B L_overhead_line29_conductor;
+  conductor_C L_overhead_line29_conductor;
+  conductor_N L_overhead_line29_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line29;
+  phases ABCN;
+  length 360;
+  from L_meter28;
+  to L_meter29;
+  configuration L_line29_configuration;
+};
+
+object meter {     
+      name L_meter29;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder29A;
+     	file "load_35_L_meter29A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line29_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line29_conductor;
+};
+
+object line_configuration {
+  name L_load_line29_configuration;
+  spacing L_load_line29_spacing;
+  conductor_A L_overhead_load_line29_conductor;
+  conductor_B L_overhead_load_line29_conductor;
+  conductor_C L_overhead_load_line29_conductor;
+  conductor_N L_overhead_load_line29_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line29;
+  phases ABCN;
+  length 100;
+  from L_meter29;
+  to L_charger29;
+  configuration L_load_line29_configuration;
+};
+
+object load {
+  
+  name L_charger29;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load29L.player;
+	};
+  parent L_charger_meter29;
+};
+
+object meter {     
+      name L_charger_meter29;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder29A;
+     	file "load_35_L_load29A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+
+object line_spacing {     
+      name L_line30_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;    
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_line30_conductor;
+};
+
+object line_configuration {
+  name L_line30_configuration;
+  spacing L_line30_spacing;
+  conductor_A L_overhead_line30_conductor;
+  conductor_B L_overhead_line30_conductor;
+  conductor_C L_overhead_line30_conductor;
+  conductor_N L_overhead_line30_conductor;
+};
+
+object overhead_line {
+  name L_overhead_line30;
+  phases ABCN;
+  length 360;
+  from L_meter29;
+  to L_meter30;
+  configuration L_line30_configuration;
+};
+
+object meter {     
+      name L_meter30;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_meter_recorder30A;
+     	file "load_35_L_meter30A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
+
+object line_spacing {     
+      name L_load_line30_spacing;     
+      distance_AB 36 in;    
+      distance_BC 36 in;    
+      distance_AC 36 in;    
+      distance_AN 36 in;    
+      distance_BN 36 in;    
+      distance_CN 36 in;     
+};
+  
+object overhead_line_conductor {
+  geometric_mean_radius 0.02083 ft;
+  resistance 0.41068;
+  name L_overhead_load_line30_conductor;
+};
+
+object line_configuration {
+  name L_load_line30_configuration;
+  spacing L_load_line30_spacing;
+  conductor_A L_overhead_load_line30_conductor;
+  conductor_B L_overhead_load_line30_conductor;
+  conductor_C L_overhead_load_line30_conductor;
+  conductor_N L_overhead_load_line30_conductor;
+};
+
+object overhead_line {
+  name L_overhead_load_line30;
+  phases ABCN;
+  length 100;
+  from L_meter30;
+  to L_charger30;
+  configuration L_load_line30_configuration;
+};
+
+object load {
+  
+  name L_charger30;
+  nominal_voltage 12470;
+  phases ABC;
+	object player {
+	   property constant_power_A, constant_power_B, constant_power_C;
+	   file load30L.player;
+	};
+  parent L_charger_meter30;
+};
+
+object meter {     
+      name L_charger_meter30;     
+      phases ABCN;     
+      nominal_voltage 12470;     
+      object recorder {
+     	name L_load_recorder30A;
+     	file "load_35_L_load30A.csv";
+     	interval 1;
+     	property measured_voltage_A.real, measured_voltage_A.imag, measured_current_A.real, measured_current_A.imag, measured_power_A.real, measured_power_A.imag;
+	};
+};
